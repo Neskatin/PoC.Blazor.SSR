@@ -1,7 +1,9 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Identity.Web;
+using PoC.Blazor.SSR.Client;
+using PoC.Blazor.SSR.Shared.Rendering;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+// Client dependencies
+builder.Services.AddSingleton<RenderLocation, RenderedOnServer>();
+
+builder.Services.AddHttpClient("PoC.Blazor.SSR.ServerAPI",
+        (sp, client) => client.BaseAddress = new Uri(sp.GetRequiredService<NavigationManager>().BaseUri))
+    .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
+builder.Services.AddClient(builder.Configuration);
+
+// Build the app
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -39,6 +51,6 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("index.html");
+app.MapFallbackToPage("/_Host");
 
 app.Run();

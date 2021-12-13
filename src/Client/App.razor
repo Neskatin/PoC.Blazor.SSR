@@ -1,25 +1,51 @@
-﻿<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly">
-        <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <NotAuthorized>
-                    @if (context.User.Identity?.IsAuthenticated != true)
-                    {
-                        <RedirectToLogin />
-                    }
-                    else
-                    {
-                        <p role="alert">You are not authorized to access this resource.</p>
-                    }
-                </NotAuthorized>
-            </AuthorizeRouteView>
-            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-        </Found>
-        <NotFound>
-            <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
+@using System.Reflection
+@using PoC.Blazor.SSR.Shared.Versioning
+
+<CascadingAuthenticationState>
+    <CascadingValue Value="@(new AppVersion(Version))">
+        <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@_additionalAssemblies">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                    <NotAuthorized>
+                        @if (context.User.Identity?.IsAuthenticated != true)
+                        {
+                            <RedirectToLogin/>
+                        }
+                        else
+                        {
+                            <p role="alert">You are not authorized to access this resource.</p>
+                        }
+                    </NotAuthorized>
+                </AuthorizeRouteView>
+                <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+            </Found>
+            <NotFound>
+                <PageTitle>Not found</PageTitle>
+                <LayoutView Layout="@typeof(MainLayout)">
+                    <p role="alert">Sorry, there's nothing at this address.</p>
+                </LayoutView>
+            </NotFound>
+        </Router>
+    </CascadingValue>
 </CascadingAuthenticationState>
+
+
+@code {
+    
+    [Parameter]
+    public string Version { get; set; }
+
+    private readonly List<Assembly> _additionalAssemblies = new()
+    {
+        //typeof(LicensePage).Assembly
+    };
+    
+    // private async Task OnNavigateAsync(NavigationContext args)
+    // {
+    //     if (args.Path.StartsWith("policy/"))
+    //     {
+    //         var assemblies = await _lazyAssemblyLoader.LoadAssembliesAsync(new[] { "BlazorBeast.Policies.dll" });
+    //         _additionalAssemblies.AddRange(assemblies);
+    //     }
+    // }
+}

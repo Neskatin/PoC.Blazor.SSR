@@ -1,0 +1,12 @@
+@page "/"
+@using PoC.Blazor.SSR.Shared.Versioning
+@using PoC.Blazor.SSR.Client
+@namespace PoC.Blazor.SSR.Server.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+    var version = AppVersion.FromEntryAssembly();
+}
+
+<component type="typeof(App)" render-mode="WebAssemblyPrerendered" param-Version="@version.Version"/>
+<persist-component-state />
