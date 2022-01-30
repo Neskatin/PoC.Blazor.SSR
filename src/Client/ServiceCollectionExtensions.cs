@@ -15,10 +15,10 @@ public static class ServiceCollectionExtensions
         // Supply HttpClient instances that include access tokens when making requests to the server project
         services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("PoC.Blazor.SSR.ServerAPI"));
 
-        services.AddMsalAuthentication(options =>
+        services.AddOidcAuthentication(options =>
         {
-            config.Bind("AzureAd", options.ProviderOptions.Authentication);
-            options.ProviderOptions.DefaultAccessTokenScopes.Add("api://api.id.uri/access_as_user");
+            config.Bind("Auth0", options.ProviderOptions);
+            options.ProviderOptions.ResponseType = "code";
         });
 
         return services;

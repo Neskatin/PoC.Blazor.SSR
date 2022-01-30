@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Identity.Web;
+using Microsoft.JSInterop;
 using PoC.Blazor.SSR.Client;
 using PoC.Blazor.SSR.Shared.Rendering;
+using JSRuntime = PoC.Blazor.SSR.Server.Mocks.JSRuntime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,7 @@ builder.Services.AddHttpClient("PoC.Blazor.SSR.ServerAPI",
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
 builder.Services.AddClient(builder.Configuration);
+builder.Services.AddTransient<IJSRuntime, JSRuntime>();
 
 // Build the app
 var app = builder.Build();
