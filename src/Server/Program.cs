@@ -26,6 +26,16 @@ builder.Services.AddHttpClient("PoC.Blazor.SSR.ServerAPI",
 builder.Services.AddClient(builder.Configuration);
 builder.Services.AddTransient<IJSRuntime, JSRuntime>();
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.Authority = builder.Configuration.GetValue<string>("Auth0:Authority");
+    options.Audience = builder.Configuration.GetValue<string>("Auth0:ClientId");
+});
+
 // Build the app
 var app = builder.Build();
 
